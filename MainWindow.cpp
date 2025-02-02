@@ -10,6 +10,7 @@ MainWindow::MainWindow()
 
 void MainWindow::onAfterRendering_()
 {
+    const unsigned int texel = 0xc0540814;
     QRhiCommandBuffer* cb = swapChain()->currentFrameCommandBuffer();
     QRhiResourceUpdateBatch* rub = rhi()->nextResourceUpdateBatch();
 
@@ -19,13 +20,15 @@ void MainWindow::onAfterRendering_()
 
         tex_ = rhi()->newTexture(QRhiTexture::RGBA8, { 1, 1 }, 1, QRhiTexture::UsedAsTransferSource);
         tex_->create();
+        rub->uploadTexture(tex_, { {0, 0,  {&texel, 4}} });
         rhi()->addCleanupCallback([this](QRhi*) { delete tex_; });
     }
 
-    int i = readBackIndex_++;
+    const int i = readBackIndex_++;
     QRhiReadbackResult* rr = new QRhiReadbackResult;
-    rr->completed = [i, rr] {
+    rr->completed = [i, rr, texel] {
         std::println("Readback {} complete", i);
+        assert(*reinterpret_cast<const unsigned int*>(rr->data.data()) == texel);
         delete rr;
         };
     rub->readBackTexture(tex_, rr);
