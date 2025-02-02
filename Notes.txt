@@ -1,0 +1,48 @@
+
+Qt 6.8.0, 6.8.2:
+	OpenGL: works
+	D3D11:  works
+	Vulkan: crashes in QRhiVulkan::finishActiveReadbacks
+	D3D12:  crashes in QRhiD3D12::finishActiveReadbacks
+
+Qt 6.9.0 Beta 2:
+	OpenGL: works
+	D3D11:  works
+	Vulkan: works
+	D3D12:  crashes in QRhiD3D12::finishActiveReadbacks
+	
+Output with Qt 6.9.0 Beta 2 and different backends:
+
+OpenGL, D3D11:
+	Readback 0 started
+	Readback 0 complete
+	Readback 1 started
+	Readback 1 complete
+	Readback 2 started
+	Readback 2 complete
+	Readback 3 started
+	Readback 3 complete
+	Readback 4 started
+	Readback 4 complete
+	....
+
+Vulkan:
+	Readback 0 started
+	Readback 1 started
+	Readback 0 complete
+	Readback 2 started
+	Readback 1 complete
+	Readback 3 started
+	Readback 2 complete
+	Readback 4 started
+	Readback 3 complete
+	...
+
+D3D12:
+	Readback 0 started
+	Readback 1 started
+	Readback 0 complete
+	Readback 2 started
+	Readback 3 started
+	C:\Repos\ReadBackIssue\x64\Release\ReadBackIssue.exe (process 5796) exited with code -1073741819 (0xc0000005).
+
